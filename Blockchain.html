@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+
+<html>
+
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blockchain - Atividade 2</title>
+    <link rel="shortcut icon" type="image/x-icon" href="img/favicon.ico">
+    <link rel="stylesheet" type="text/css" href="src/estilo.css"/>
+    <script src="src/jquery-3.5.1.js"></script>
+    <script src="src/js.js"></script>
+    <script>
+	    var dificuldade = getNum("Insira a dificuldade: "); //gera um alert pedindo a dificuldade
+      $("<span id='dificuldade' style='display:none'>"+dificuldade+"</span>").appendTo(document.body); //salva o valor estipulado
+      function criaBloco(){ //cria um novo bloco
+        var tamChain = $('[id^="blocos"]').length;
+        var dadobloco = document.getElementById("gravarbloco").value; //recebe o valor passado pelo campo dado
+        if(dadobloco==""){ //verifica se há algo no campo dado
+          alert("Por favor, insira um valor no campo destinado ao Dado!");
+          return;
+        }
+        if(tamChain==0){ //se for o primeiro bloco, aplica o index = 0, o hash do último bloco = 0 e escreve essas informações no html
+			      indexbloco = 0;
+            hashultimobloco = '0';
+            nonce = mineraBloco(indexbloco,dadobloco,hashultimobloco);
+            $("<div id='blocos'><h2 style='color: #DC143C'>Index: </h2><span id='indexbloco0' class='indexbloco' style='display:block'>"+'0'+"</span>").appendTo(document.body);
+            $("<h2 style='color: #DC143C'>Hash Anterior: </h2><span id='hashultimobloco0' class='ultimoHash' style='display:block'>"+'0'+"</span>").appendTo(document.body);
+            $("<h2 id='n' style='color: #DC143C'>Nonce: </h2><span id='nonce0' class='nonce' style='display:block'>"+nonce+"</span>").appendTo(document.body);
+        }
+        else{ //se não for o primeiro bloco, aplica index = tamanho da chain, recebe o hash do bloco anterior para o campo hash anterior e escreve essas informações no html
+            indexbloco = tamChain;
+            hashultimobloco = $('[id^="hash'+(indexbloco-1)+'"]').text();
+            nonce = mineraBloco(indexbloco,dadobloco,hashultimobloco);
+            $("<div id='blocos'><h2 style='color: #DC143C'>Index: </h2><span id='indexbloco"+indexbloco+"' class='indexbloco' style='display:block'>"+indexbloco+"</span>").appendTo(document.body);
+            $("<h2 style='color: #DC143C'>Hash Anterior: </h2><span id='hashultimobloco"+indexbloco+"' class='ultimoHash' style='display:block'>"+hashultimobloco+"</span>").appendTo(document.body);
+            $("<h2 id='n' style='color: #DC143C'>Nonce: </h2><span id='nonce"+indexbloco+"' class='nonce' style='display:block'>"+nonce+"</span>").appendTo(document.body);
+        }
+        hash = calculoHash(indexbloco,dadobloco,hashultimobloco,nonce); //calcula o hash e o escreve junto com o dado no html, também é criado o botão do bloco
+        $("<h2 id='h' style='color:#DC143C'>Hash: </h2><span id='hash"+indexbloco+"' class='hash' style='display:block'>"+hash+"</span>").appendTo(document.body);
+        $("<h2 style='color:#DC143C'>Dado: </h2><input type='text' id='dado"+indexbloco+"' class='dado' style='display:block'></input>").appendTo(document.body);
+        $("<button id='botaoatualiza"+indexbloco+"' onclick='validaChain();'>Atualizar, Validar & Minerar Bloco</button></div>").appendTo(document.body);
+        $('#gravarbloco').val(""); //limpa o campo de texto
+        $('#dado'+indexbloco).val(dadobloco); //escreve o dado no campo de texto "dado" do bloco
+		return false;
+	  }
+    </script>
+  </head>
+
+  <body>
+    <div id="container1">
+    <h1 class="titulo">Blockchain</h1>
+    </div>
+    <div id="container2">
+      <h2 class ="titulocadastro">Cadastre um novo Bloco:</h2>
+      <form id="register-form" action="">
+        <div class="label1">
+          <label for="dadobloco">Dado:</label>
+          <input type="text" id="gravarbloco"/>
+        </div>
+        <div class="botoes">
+          <button id="botaoconfirma" type="button" class="button" onclick="criaBloco();">Criar Bloco</button>
+        </div>
+        <div class="botoes">
+          <button id="botaolimpar" type="button" class="button" onclick="window.location.reload();">Recomeçar</button>
+        </div>
+    </div>
+  </body>
+
+</html>
